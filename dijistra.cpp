@@ -1,77 +1,74 @@
 #include <iostream>
 using namespace std;
-
-int n,short_path[50],reached[50],cost[50][50],backtrack[50][50];
-int minidis (int short_path[], int reached[])
+int t = 0;
+int min(int x, int y)
 {
-    int min_index,minidis = 9999;
-    for (int i=0; i<n; i++)
-    {
-        if (reached[i]==0 && short_path[i] <= minidis) 
-        {
-            min_index = i;
-            minidis = short_path[i];
-        }
-    }
-    return min_index;
+    if (x < y)
+        return x;
+    else
+        return y;
 }
-void dijistra (int m,int short_path[], int reached[])
-{
-    if (m > 0)
-    {
-        int minidismum = minidis(short_path,reached);
-        reached[minidismum] = 1;
-        for (int j=0; j<n; j++)
-        {
-            if (short_path[minidismum] + cost[minidismum][j] < short_path[j]) 
-            {
-                short_path[j] = short_path[minidismum] + cost[minidismum][j];
-            }
-            cout << short_path[j] << " ";
-            backtrack[minidismum][j] = short_path[j];
-        }
-        cout << endl;
-        dijistra (m-1,short_path,reached);
-    }
 
+void djistras(int n, int cost[][10], int distance[])
+{
+    static int i;
+    if (i < n)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            distance[j] = min(distance[j], distance[i] + cost[i][j]);
+            t++;
+        }
+        i++;
+        djistras(n, cost, distance);
+    }
 }
 
 int main()
 {
-    int i,j,k;
-    cout << "Enter the number of vertices: ";
+    int n, s = 0, cost[10][10], distance[10];
+    cout << " enter the number of nodes " << endl;
     cin >> n;
-    cout << "Enter the array of graph: ";
-    for (i=0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
-        for (j=0; j<n; j++)
+        // cout << " enter the weight of row :" << i + 1 << endl;
+        for (int j = 0; j < n; j++)
         {
             cin >> cost[i][j];
         }
     }
-    for (i=0; i<n ;i++)
+    distance[0] = 0;
+    for (int i = 1; i < n; i++)
     {
-        short_path[i] = 9999;
-        reached[i] = 0;
+        distance[i] = 999;
     }
-    cout << "Enter the source vertex: ";
-    cin >> k;
-    short_path[k-1] = 0;
-    dijistra(n,short_path,reached);
-    for (j=0; j<n; j++)
+    djistras(n, cost, distance);
+    cout << " by djkstras algorithm the distance from source are:" << endl;
+    for (int i = 1; i < n; i++)
     {
-        cout << short_path[j] << " ";
+        cout << s + 1 << " : ->" << i + 1 << " = " << distance[i] << endl;
     }
-
-    cout << endl;
-    cout<<"Visited Array: "<<endl;
-    cout << endl;
-    for (i=0; i<n; i++)
-        cout << reached[i] << " ";
-
-    cout << endl;
-    cout<<"Shortest Distance: "<<short_path[5];
-
-    cout << endl;
+    if (n < t * t)
+    {
+        cout << " the time complexity is O(n*n)" << endl;
+    }
     return 0;
 }
+
+/*
+0 4 0 0 0 0 0 8 0 
+4 0 8 0 0 0 0 11 0 
+0 8 0 7 0 4 0 0 2 
+0 0 7 0 9 14 0 0 0 
+0 0 0 9 0 10 0 0 0 
+0 0 4 14 10 0 2 0 0 
+8 11 0 0 0 0 1 0 7 
+0 0 2 0 0 0 6 7 0
+*/
+
+/*
+0 3 999 7
+8 0 2 999
+5 999 0 1
+2 999 999 0
+*/
